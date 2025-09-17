@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Instagram-like Feed (Demo)</title>
+  <style>
+    :root{
+      --bg:#fafafa; --card:#fff; --muted:#8e8e8e; --accent:#0095f6;
+      --shadow: 0 1px 3px rgba(0,0,0,0.08);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+    *{box-sizing:border-box}
+    body{margin:0; background:var(--bg); color:#111}
+    .container{max-width:980px;margin:22px auto;padding:0 16px}
+
+    /* Header */
+    header.site{display:flex;align-items:center;justify-content:space-between;padding:12px 0}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:20px}
+    .logo img{width:34px;height:34px;border-radius:8px}
+    .search{flex:1;max-width:420px;margin:0 16px}
+    .search input{width:100%;padding:8px 12px;border:1px solid #e6e6e6;border-radius:8px;background:#fff}
+    .actions{display:flex;gap:10px}
+    .btn{background:transparent;border:none;cursor:pointer;padding:8px;border-radius:8px}
+
+    /* Stories */
+    .stories{display:flex;gap:12px;overflow-x:auto;padding:12px 0;margin-bottom:12px}
+    .story{min-width:78px;text-align:center}
+    .story .avatar{width:64px;height:64px;border-radius:50%;border:3px solid linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888);overflow:hidden}
+    .story img{width:100%;height:100%;object-fit:cover;display:block}
+    .story p{font-size:12px;margin:6px 0 0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+    /* Feed */
+    .feed{display:grid;grid-template-columns:1fr;gap:18px}
+    @media(min-width:950px){.layout{display:grid;grid-template-columns:640px 1fr;gap:24px}.feed{grid-column:1/2}.sidebar{grid-column:2/3}}
+
+    .post{background:var(--card);border-radius:10px;box-shadow:var(--shadow);overflow:hidden}
+    .post .meta{display:flex;align-items:center;padding:12px}
+    .post .meta .avatar{width:42px;height:42px;border-radius:50%;overflow:hidden;margin-right:12px}
+    .post .meta strong{display:block}
+    .post .media{background:#000;height:420px;display:flex;align-items:center;justify-content:center}
+    .post .media img{width:100%;height:100%;object-fit:cover}
+    .post .actions{display:flex;align-items:center;gap:8px;padding:10px}
+    .heart{cursor:pointer;font-size:22px}
+    .liked{color:#e74c3c}
+    .post .desc{padding:0 12px 12px;line-height:1.35}
+    .post .comments{padding:0 12px 12px;font-size:14px;color:var(--muted)}
+    .comment-form{display:flex;padding:8px 12px;border-top:1px solid #f1f1f1}
+    .comment-form input{flex:1;padding:8px;border:1px solid #eee;border-radius:8px}
+    .comment-form button{margin-left:8px;padding:8px 12px;border-radius:8px;border:0;background:var(--accent);color:#fff;cursor:pointer}
+
+    /* Sidebar */
+    .sidebar .card{background:var(--card);padding:12px;border-radius:10px;box-shadow:var(--shadow);margin-bottom:12px}
+    .suggestion{display:flex;align-items:center;gap:12px}
+    .suggestion img{width:44px;height:44px;border-radius:50%}
+
+    footer{margin:28px 0;color:var(--muted);font-size:13px;text-align:center}
+
+    /* small tweaks */
+    .muted{color:var(--muted);font-size:13px}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="site">
+      <div class="logo"><img src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='40' height='40'><rect rx='8' width='40' height='40' fill='%230095f6'/><text x='50%' y='55%' font-size='20' text-anchor='middle' fill='white' font-family='Arial' font-weight='bold'>IG</text></svg>" alt="logo"> InstaDemo</div>
+      <div class="search"><input id="search" placeholder="Search" /></div>
+      <div class="actions"><button class="btn">➕</button><button class="btn">❤</button><button class="btn">✉</button></div>
+    </header>
+
+    <div class="layout">
+      <main class="feed">
+        <section class="stories" aria-label="Stories">
+          <div class="story"><div class="avatar"><img src="https://picsum.photos/seed/s1/200" alt="s1"></div><p>Your Story</p></div>
+          <div class="story"><div class="avatar"><img src="https://picsum.photos/seed/s2/200" alt="s2"></div><p>alexandra</p></div>
+          <div class="story"><div class="avatar"><img src="https://picsum.photos/seed/s3/200" alt="s3"></div><p>sam</p></div>
+          <div class="story"><div class="avatar"><img src="https://picsum.photos/seed/s4/200" alt="s4"></div><p>maya</p></div>
+          <div class="story"><div class="avatar"><img src="https://picsum.photos/seed/s5/200" alt="s5"></div><p>friends</p></div>
+        </section>
+
+        <!-- Post template -->
+        <article class="post" data-id="1">
+          <div class="meta"><div class="avatar"><img src="https://picsum.photos/seed/p1/200" alt="user"></div><div><strong>john_doe</strong><div class="muted">Barcelona, Spain</div></div></div>
+          <div class="media"><img src="https://picsum.photos/seed/post1/900/600" alt="post1"></div>
+          <div class="actions"><button class="heart" aria-label="like">♡</button><div class="muted">1,024 likes</div></div>
+          <div class="desc"><strong>john_doe</strong> — A beautiful day at the beach. #sun #vacation</div>
+          <div class="comments" aria-live="polite"><div class="comment">sara: Wow — gorgeous!</div></div>
+          <form class="comment-form" onsubmit="return false;"><input placeholder="Add a comment..."/><button type="button">Post</button></form>
+        </article>
+
+        <article class="post" data-id="2">
+          <div class="meta"><div class="avatar"><img src="https://picsum.photos/seed/p2/200" alt="user"></div><div><strong>travelwithme</strong><div class="muted">Kyoto, Japan</div></div></div>
+          <div class="media"><img src="https://picsum.photos/seed/post2/900/600" alt="post2"></div>
+          <div class="actions"><button class="heart" aria-label="like">♡</button><div class="muted">5,321 likes</div></div>
+          <div class="desc"><strong>travelwithme</strong> — Quiet temples and fast trains.</div>
+          <div class="comments"><div class="comment">lee: I want to go!</div><div class="comment">anna: Save for later ✨</div></div>
+          <form class="comment-form" onsubmit="return false;"><input placeholder="Add a comment..."/><button type="button">Post</button></form>
+        </article>
+
+      </main>
+
+      <aside class="sidebar">
+        <div class="card">
+          <div style="display:flex;align-items:center;gap:12px"><img src="https://picsum.photos/seed/me/100" alt="me" style="width:56px;height:56px;border-radius:50%"><div><strong>you_now</strong><div class="muted">Your Profile</div></div></div>
+        </div>
+
+        <div class="card">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><strong>Suggested</strong><a href="#" style="font-size:13px;color:var(--muted);text-decoration:none">See All</a></div>
+          <div style="display:flex;flex-direction:column;gap:10px">
+            <div class="suggestion"><img src="https://picsum.photos/seed/sug1/100" alt="sug"><div><strong>luna</strong><div class="muted">Popular</div></div><button class="btn" style="margin-left:auto;color:var(--accent)">Follow</button></div>
+            <div class="suggestion"><img src="https://picsum.photos/seed/sug2/100" alt="sug"><div><strong>pixelart</strong><div class="muted">Recommended</div></div><button class="btn" style="margin-left:auto;color:var(--accent)">Follow</button></div>
+          </div>
+        </div>
+
+        <div class="card muted" style="text-align:center;font-size:13px">About • Help • Press • API • Jobs • Privacy</div>
+      </aside>
+    </div>
+
+    <footer>Demo Instagram-like layout — local/static only. Replace images with your own and connect to a backend for real data.</footer>
+  </div>
+
+  <script>
+    // Simple interactive behaviours: like toggle and comments
+    document.querySelectorAll('.post').forEach(post=>{
+      const heart = post.querySelector('.heart');
+      const likesLabel = post.querySelector('.actions .muted');
+      const commentForm = post.querySelector('.comment-form');
+      const commentList = post.querySelector('.comments');
+
+      heart.addEventListener('click', ()=>{
+        const liked = heart.classList.toggle('liked');
+        heart.textContent = liked ? '❤' : '♡';
+        // naive likes counter update
+        const current = parseInt(likesLabel.textContent.replace(/,/g,'')) || 0;
+        likesLabel.textContent = (liked? (current+1) : Math.max(0,current-1)).toLocaleString() + ' likes';
+      });
+
+      commentForm.querySelector('button').addEventListener('click', ()=>{
+        const input = commentForm.querySelector('input');
+        const text = input.value.trim();
+        if(!text) return;
+        const div = document.createElement('div'); div.className='comment'; div.textContent = 'you: ' + text;
+        commentList.appendChild(div);
+        input.value = '';
+      });
+    });
+
+    // Simple search filter for posts by username or description
+    document.getElementById('search').addEventListener('input', (e)=>{
+      const q = e.target.value.toLowerCase();
+      document.querySelectorAll('.post').forEach(p=>{
+        const text = p.textContent.toLowerCase();
+        p.style.display = q && !text.includes(q) ? 'none' : '';
+      });
+    });
+  </script>
+</body>
+</html>
