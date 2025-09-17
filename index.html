@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Simple Responsive Website</title>
+  <meta name="description" content="A clean, responsive single-file HTML website example." />
+  <style>
+    /* ----- Basic Reset ----- */
+    *,*::before,*::after{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;line-height:1.5;color:#111}
+    img{max-width:100%;height:auto;display:block}
+
+    /* ----- Layout / Utilities ----- */
+    .container{max-width:1100px;margin:0 auto;padding:0 1rem}
+    .flex{display:flex}
+    .grid{display:grid}
+    .btn{display:inline-block;padding:0.6rem 1rem;border-radius:8px;text-decoration:none;border:0;cursor:pointer}
+
+    /* ----- Header ----- */
+    header{background:linear-gradient(90deg,#0f172a,#0b1220);color:#fff}
+    .nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 0}
+    .brand{font-weight:700;letter-spacing:0.2px}
+    nav ul{list-style:none;margin:0;padding:0;display:flex;gap:1rem}
+    nav a{color:rgba(255,255,255,0.9);text-decoration:none}
+    .menu-toggle{display:none;background:none;border:0;color:#fff;font-size:1.2rem}
+
+    /* ----- Hero ----- */
+    .hero{padding:4rem 0;display:grid;grid-template-columns:1fr 420px;gap:2rem;align-items:center}
+    .hero h1{font-size:2.25rem;margin:0 0 0.5rem}
+    .hero p{margin:0 0 1.25rem;color:rgba(255,255,255,0.9)}
+    .card{background:#fff;padding:1rem;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.3)}
+
+    /* ----- Features ----- */
+    .features{padding:3rem 0}
+    .feature-list{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
+    .feature{background:#fff;padding:1.25rem;border-radius:10px}
+    .feature h3{margin:0 0 0.5rem}
+
+    /* ----- Gallery ----- */
+    .gallery{padding:3rem 0}
+    .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem}
+
+    /* ----- Contact ----- */
+    .contact{padding:3rem 0}
+    form{display:grid;gap:0.75rem}
+    input,textarea{padding:0.6rem;border-radius:8px;border:1px solid #d3d3d3;font-size:0.95rem}
+
+    /* ----- Footer ----- */
+    footer{padding:2rem 0;background:#071022;color:rgba(255,255,255,0.8)}
+
+    /* ----- Responsive ----- */
+    @media (max-width:900px){
+      .hero{grid-template-columns:1fr;}
+      .feature-list{grid-template-columns:repeat(2,1fr)}
+      .gallery-grid{grid-template-columns:repeat(2,1fr)}
+    }
+    @media (max-width:600px){
+      nav ul{display:none}
+      .menu-toggle{display:inline}
+      .feature-list{grid-template-columns:1fr}
+      .gallery-grid{grid-template-columns:1fr}
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="container nav">
+    <div class="brand">YourSite</div>
+
+    <nav>
+      <button class="menu-toggle" aria-expanded="false" aria-controls="navlist">☰</button>
+      <ul id="navlist">
+        <li><a href="#home">Home</a></li>
+        <li><a href="#features">Features</a></li>
+        <li><a href="#gallery">Gallery</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </nav>
+  </div>
+</header>
+
+<main class="container" id="home">
+  <section class="hero">
+    <div>
+      <h1>Build fast — beautiful — accessible websites</h1>
+      <p>Single-file example that's responsive, accessible, and easy to customize. Perfect starting point for a portfolio, small business or product landing page.</p>
+      <p>
+        <a class="btn" href="#features" style="background:#06b6d4;color:#052025">Explore features</a>
+        <a class="btn" href="#contact" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;margin-left:0.5rem">Get in touch</a>
+      </p>
+      <ul style="margin-top:1.25rem;color:rgba(255,255,255,0.9);">
+        <li>Responsive layout</li>
+        <li>Lightweight CSS — no libraries</li>
+        <li>Accessible navigation</li>
+      </ul>
+    </div>
+
+    <aside class="card">
+      <h3 style="margin-top:0">Newsletter</h3>
+      <p style="margin:0 0 1rem;color:#334155">Sign up to receive updates and tips.</p>
+      <form id="newsletter" onsubmit="return subscribe(event)">
+        <input id="email" type="email" placeholder="Your email" required />
+        <button class="btn" style="margin-top:0.5rem;background:#0ea5a4;color:#052025">Subscribe</button>
+      </form>
+      <p id="msg" style="margin-top:0.5rem;font-size:0.9rem;color:#065f5b"></p>
+    </aside>
+  </section>
+
+  <section id="features" class="features">
+    <h2>Features</h2>
+    <div class="feature-list" style="margin-top:1rem">
+      <article class="feature">
+        <h3>Fast & Lightweight</h3>
+        <p>Small single-file footprint — easy to host anywhere.</p>
+      </article>
+      <article class="feature">
+        <h3>Accessible</h3>
+        <p>Keyboard-friendly navigation and semantic HTML structure.</p>
+      </article>
+      <article class="feature">
+        <h3>Customizable</h3>
+        <p>Styles are simple — change colors, spacing, and content easily.</p>
+      </article>
+    </div>
+  </section>
+
+  <section id="gallery" class="gallery">
+    <h2>Gallery</h2>
+    <div class="gallery-grid" style="margin-top:1rem">
+      <div><img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=800&q=60&auto=format&fit=crop" alt="Sample 1"></div>
+      <div><img src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=800&q=60&auto=format&fit=crop" alt="Sample 2"></div>
+      <div><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=60&auto=format&fit=crop" alt="Sample 3"></div>
+      <div><img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800&q=60&auto=format&fit=crop" alt="Sample 4"></div>
+    </div>
+  </section>
+
+  <section id="contact" class="contact">
+    <h2>Contact</h2>
+    <div style="margin-top:1rem;display:grid;grid-template-columns:1fr 320px;gap:1rem;align-items:start">
+      <div>
+        <p>Want to work together or ask a question? Send a message and we'll reply shortly.</p>
+        <form id="contactForm" onsubmit="return sendMessage(event)">
+          <input name="name" placeholder="Your name" required />
+          <input name="email" type="email" placeholder="Email" required />
+          <textarea name="message" rows="5" placeholder="Message" required></textarea>
+          <button class="btn" style="background:#06b6d4;color:#052025">Send message</button>
+        </form>
+        <p id="contactMsg" style="margin-top:0.5rem;font-size:0.95rem"></p>
+      </div>
+
+      <aside class="card">
+        <h4 style="margin-top:0">Office</h4>
+        <p style="margin:0.25rem 0">123 Example Street<br>City, Country</p>
+        <p style="margin:0.25rem 0">Email: hello@yoursite.com<br>Phone: +1 (555) 123-4567</p>
+      </aside>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="container" style="display:flex;justify-content:space-between;align-items:center">
+    <small>© <span id="year"></span> YourSite — All rights reserved</small>
+    <div>
+      <a href="#" style="color:inherit;text-decoration:none;margin-right:0.75rem">Privacy</a>
+      <a href="#" style="color:inherit;text-decoration:none">Terms</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // set year
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  // mobile menu
+  const toggle = document.querySelector('.menu-toggle');
+  const navlist = document.getElementById('navlist');
+  toggle && toggle.addEventListener('click', () => {
+    const expanded = toggle.getAttribute('aria-expanded') === 'true';
+    toggle.setAttribute('aria-expanded', String(!expanded));
+    if (navlist.style.display === 'block') navlist.style.display = '';
+    else navlist.style.display = 'block';
+  });
+
+  // simple newsletter subscribe (demo only)
+  function subscribe(e){
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const msg = document.getElementById('msg');
+    if(!email){ msg.textContent = 'Please enter an email.'; return false }
+    msg.textContent = 'Thanks! You are subscribed (demo).';
+    e.target.reset();
+    return false;
+  }
+
+  // contact form (demo)
+  function sendMessage(e){
+    e.preventDefault();
+    const form = e.target;
+    const name = form.name.value.trim();
+    const email = form.email.value.trim();
+    const message = form.message.value.trim();
+    const out = document.getElementById('contactMsg');
+    if(!name || !email || !message){ out.textContent = 'Please complete all fields.'; out.style.color = 'crimson'; return false }
+    out.style.color = '#065f5b';
+    out.textContent = 'Message sent — thanks! (demo)';
+    form.reset();
+    return false;
+  }
+
+  // small accessibility enhancement: trap focus in mobile nav when open (optional)
+</script>
+
+</body>
+</html>
