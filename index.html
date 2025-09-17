@@ -1,219 +1,369 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Simple Responsive Website</title>
-  <meta name="description" content="A clean, responsive single-file HTML website example." />
-  <style>
-    /* ----- Basic Reset ----- */
-    *,*::before,*::after{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;line-height:1.5;color:#111}
-    img{max-width:100%;height:auto;display:block}
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>InstApp — Mini Instagram App (Demo)</title>
+<style>
+  :root{
+    --bg:#FAFAFA; --card:#FFFFFF; --muted:#8f8f8f; --accent:#0095f6;
+    --glass: rgba(255,255,255,0.6);
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    margin:0; font-family:system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;
+    background:linear-gradient(180deg,#fff 0%, #fbfbfb 100%); color:#111;
+    -webkit-font-smoothing:antialiased; -moz-osx-font-smoothing:grayscale;
+    display:flex;flex-direction:column;align-items:stretch;
+  }
 
-    /* ----- Layout / Utilities ----- */
-    .container{max-width:1100px;margin:0 auto;padding:0 1rem}
-    .flex{display:flex}
-    .grid{display:grid}
-    .btn{display:inline-block;padding:0.6rem 1rem;border-radius:8px;text-decoration:none;border:0;cursor:pointer}
+  /* App frame */
+  .app{
+    width:100%; max-width:420px; margin:0 auto; flex:1 1 auto;
+    display:flex;flex-direction:column;height:100vh;border-left:1px solid #eee;border-right:1px solid #eee;
+    background:var(--bg);
+  }
 
-    /* ----- Header ----- */
-    header{background:linear-gradient(90deg,#0f172a,#0b1220);color:#fff}
-    .nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 0}
-    .brand{font-weight:700;letter-spacing:0.2px}
-    nav ul{list-style:none;margin:0;padding:0;display:flex;gap:1rem}
-    nav a{color:rgba(255,255,255,0.9);text-decoration:none}
-    .menu-toggle{display:none;background:none;border:0;color:#fff;font-size:1.2rem}
+  /* Top bar */
+  header.appbar{
+    display:flex;align-items:center;justify-content:space-between;padding:10px 12px;
+    border-bottom:1px solid #eee;background:linear-gradient(180deg,rgba(255,255,255,0.9),rgba(255,255,255,0.7));
+    backdrop-filter: blur(6px);
+  }
+  .brand{font-weight:700;letter-spacing:1.6px}
+  .appbar .actions{display:flex;gap:8px}
 
-    /* ----- Hero ----- */
-    .hero{padding:4rem 0;display:grid;grid-template-columns:1fr 420px;gap:2rem;align-items:center}
-    .hero h1{font-size:2.25rem;margin:0 0 0.5rem}
-    .hero p{margin:0 0 1.25rem;color:rgba(255,255,255,0.9)}
-    .card{background:#fff;padding:1rem;border-radius:12px;box-shadow:0 6px 20px rgba(2,6,23,0.3)}
+  /* Stories */
+  .stories{
+    display:flex;gap:10px;padding:12px;overflow:auto;border-bottom:1px solid #f0f0f0;background:transparent;
+  }
+  .story{flex:0 0 auto;width:72px;text-align:center}
+  .story .avatar{width:60px;height:60px;border-radius:50%;overflow:hidden;border:3px solid transparent;padding:2px;background:linear-gradient(45deg,#f09433,#e6683c,#dc2743,#cc2366,#bc1888)}
+  .story img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+  .story small{display:block;margin-top:6px;font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-    /* ----- Features ----- */
-    .features{padding:3rem 0}
-    .feature-list{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem}
-    .feature{background:#fff;padding:1.25rem;border-radius:10px}
-    .feature h3{margin:0 0 0.5rem}
+  /* Feed */
+  main.feed{flex:1 1 auto;overflow:auto;padding:10px}
+  .post{background:var(--card);border-radius:12px;border:1px solid #eee;margin-bottom:14px;overflow:hidden;box-shadow:0 1px 0 rgba(0,0,0,0.02)}
+  .post .meta{display:flex;align-items:center;padding:10px;gap:10px}
+  .meta img{width:44px;height:44px;border-radius:50%;object-fit:cover}
+  .meta .who{font-weight:600}
+  .meta small{display:block;color:var(--muted);font-size:12px}
 
-    /* ----- Gallery ----- */
-    .gallery{padding:3rem 0}
-    .gallery-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:0.5rem}
+  .media-wrap{width:100%;height:360px;background:#efefef;display:flex;align-items:center;justify-content:center;overflow:hidden}
+  .media-wrap img{width:100%;height:100%;object-fit:cover;display:block}
 
-    /* ----- Contact ----- */
-    .contact{padding:3rem 0}
-    form{display:grid;gap:0.75rem}
-    input,textarea{padding:0.6rem;border-radius:8px;border:1px solid #d3d3d3;font-size:0.95rem}
+  .post .row{display:flex;align-items:center;justify-content:space-between;padding:8px 10px}
+  .icons{display:flex;gap:12px;align-items:center}
+  .icon{width:26px;height:26px;display:inline-block;cursor:pointer}
+  .likes{padding:0 10px 8px;font-weight:700}
+  .caption{padding:0 10px 8px;color:var(--muted)}
 
-    /* ----- Footer ----- */
-    footer{padding:2rem 0;background:#071022;color:rgba(255,255,255,0.8)}
+  .comments{padding:0 10px 8px}
+  .comment{font-size:14px;margin:6px 0}
 
-    /* ----- Responsive ----- */
-    @media (max-width:900px){
-      .hero{grid-template-columns:1fr;}
-      .feature-list{grid-template-columns:repeat(2,1fr)}
-      .gallery-grid{grid-template-columns:repeat(2,1fr)}
-    }
-    @media (max-width:600px){
-      nav ul{display:none}
-      .menu-toggle{display:inline}
-      .feature-list{grid-template-columns:1fr}
-      .gallery-grid{grid-template-columns:1fr}
-    }
+  .add-comment{display:flex;border-top:1px solid #f0f0f0;padding:8px;background:transparent}
+  .add-comment input{flex:1;border:0;outline:none;padding:8px;font-size:14px}
+  .add-comment button{border:0;background:none;color:var(--accent);font-weight:700;padding:8px;cursor:pointer}
 
-  </style>
+  /* Bottom nav */
+  nav.bottom-nav{
+    display:flex;gap:4px;align-items:center;justify-content:space-around;padding:8px;border-top:1px solid #eee;background:linear-gradient(180deg,rgba(255,255,255,0.92),rgba(255,255,255,0.85));
+    position:sticky;bottom:0;z-index:40;
+  }
+  nav button{background:transparent;border:0;display:flex;flex-direction:column;align-items:center;font-size:11px;color:var(--muted);cursor:pointer}
+  nav button.active{color:var(--accent);font-weight:700}
+
+  /* Modal / viewer */
+  .overlay{position:fixed;inset:0;background:rgba(0,0,0,0.6);display:none;align-items:center;justify-content:center;padding:18px;z-index:60}
+  .viewer{width:100%;max-width:900px;background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 20px 40px rgba(0,0,0,0.4)}
+  .viewer .media{width:100%;height:80vh;display:flex;align-items:center;justify-content:center;background:#000}
+  .viewer img{max-width:100%;max-height:100%;object-fit:contain}
+
+  /* Upload modal */
+  .modal{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:94%;max-width:420px;background:var(--card);border-radius:12px;padding:12px;box-shadow:0 12px 30px rgba(0,0,0,0.2);display:none;z-index:70}
+  .modal h3{margin:0 0 8px}
+  .upload-preview{width:100%;height:240px;background:#f6f6f6;border-radius:8px;display:flex;align-items:center;justify-content:center;overflow:hidden;margin-bottom:8px}
+  .upload-preview img{width:100%;height:100%;object-fit:cover}
+
+  /* Responsive tweaks */
+  @media(min-width:720px){
+    .stories{padding:16px}
+    .media-wrap{height:440px}
+  }
+</style>
 </head>
 <body>
+  <div class="app" id="app">
+    <header class="appbar">
+      <div class="brand">InstApp</div>
+      <div class="actions">
+        <button id="exploreBtn" title="Explore" class="icon" aria-label="Explore">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M12 2L15 8l6 1-4.5 4 1 6L12 16l-6.5 3 1-6L2 9l6-1 3-6z"/></svg>
+        </button>
+        <button id="newPostBtn" title="New post" class="icon" aria-label="New post">
+          <svg viewBox="0 0 24 24" width="22" height="22"><path fill="currentColor" d="M5 3h14a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zm7 4a5 5 0 1 0 0 10 5 5 0 0 0 0-10z"/></svg>
+        </button>
+      </div>
+    </header>
 
-<header>
-  <div class="container nav">
-    <div class="brand">YourSite</div>
+    <div class="stories" id="stories">
+      <!-- stories injected by JS -->
+    </div>
 
-    <nav>
-      <button class="menu-toggle" aria-expanded="false" aria-controls="navlist">☰</button>
-      <ul id="navlist">
-        <li><a href="#home">Home</a></li>
-        <li><a href="#features">Features</a></li>
-        <li><a href="#gallery">Gallery</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
+    <main class="feed" id="feed" aria-live="polite">
+      <!-- posts injected by JS -->
+    </main>
+
+    <nav class="bottom-nav" role="navigation">
+      <button id="homeNav" class="active"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/></svg><span>Home</span></button>
+      <button id="searchNav"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M15.5 14h-.79l-.28-.27A6.5 6.5 0 1 0 14 15.5l.27.28v.79L20 21l1-1-5.5-6z"/></svg><span>Search</span></button>
+      <button id="uploadNav"><svg width="28" height="28" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2v12m0 0l4-4m-4 4-4-4M5 20h14a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-3"/></svg><span>Upload</span></button>
+      <button id="activityNav"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4 8.24 4 9.91 4.81 11 6.08 12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg><span>Activity</span></button>
+      <button id="profileNav"><svg width="22" height="22" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12a5 5 0 1 0 0-10 5 5 0 0 0 0 10zm0 2c-4 0-8 2-8 6v2h16v-2c0-4-4-6-8-6z"/></svg><span>Profile</span></button>
     </nav>
   </div>
-</header>
 
-<main class="container" id="home">
-  <section class="hero">
-    <div>
-      <h1>Build fast — beautiful — accessible websites</h1>
-      <p>Single-file example that's responsive, accessible, and easy to customize. Perfect starting point for a portfolio, small business or product landing page.</p>
-      <p>
-        <a class="btn" href="#features" style="background:#06b6d4;color:#052025">Explore features</a>
-        <a class="btn" href="#contact" style="background:transparent;border:1px solid rgba(255,255,255,0.2);color:#fff;margin-left:0.5rem">Get in touch</a>
-      </p>
-      <ul style="margin-top:1.25rem;color:rgba(255,255,255,0.9);">
-        <li>Responsive layout</li>
-        <li>Lightweight CSS — no libraries</li>
-        <li>Accessible navigation</li>
-      </ul>
-    </div>
-
-    <aside class="card">
-      <h3 style="margin-top:0">Newsletter</h3>
-      <p style="margin:0 0 1rem;color:#334155">Sign up to receive updates and tips.</p>
-      <form id="newsletter" onsubmit="return subscribe(event)">
-        <input id="email" type="email" placeholder="Your email" required />
-        <button class="btn" style="margin-top:0.5rem;background:#0ea5a4;color:#052025">Subscribe</button>
-      </form>
-      <p id="msg" style="margin-top:0.5rem;font-size:0.9rem;color:#065f5b"></p>
-    </aside>
-  </section>
-
-  <section id="features" class="features">
-    <h2>Features</h2>
-    <div class="feature-list" style="margin-top:1rem">
-      <article class="feature">
-        <h3>Fast & Lightweight</h3>
-        <p>Small single-file footprint — easy to host anywhere.</p>
-      </article>
-      <article class="feature">
-        <h3>Accessible</h3>
-        <p>Keyboard-friendly navigation and semantic HTML structure.</p>
-      </article>
-      <article class="feature">
-        <h3>Customizable</h3>
-        <p>Styles are simple — change colors, spacing, and content easily.</p>
-      </article>
-    </div>
-  </section>
-
-  <section id="gallery" class="gallery">
-    <h2>Gallery</h2>
-    <div class="gallery-grid" style="margin-top:1rem">
-      <div><img src="https://images.unsplash.com/photo-1503023345310-bd7c1de61c7d?w=800&q=60&auto=format&fit=crop" alt="Sample 1"></div>
-      <div><img src="https://images.unsplash.com/photo-1496307042754-b4aa456c4a2d?w=800&q=60&auto=format&fit=crop" alt="Sample 2"></div>
-      <div><img src="https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=800&q=60&auto=format&fit=crop" alt="Sample 3"></div>
-      <div><img src="https://images.unsplash.com/photo-1499951360447-b19be8fe80f5?w=800&q=60&auto=format&fit=crop" alt="Sample 4"></div>
-    </div>
-  </section>
-
-  <section id="contact" class="contact">
-    <h2>Contact</h2>
-    <div style="margin-top:1rem;display:grid;grid-template-columns:1fr 320px;gap:1rem;align-items:start">
-      <div>
-        <p>Want to work together or ask a question? Send a message and we'll reply shortly.</p>
-        <form id="contactForm" onsubmit="return sendMessage(event)">
-          <input name="name" placeholder="Your name" required />
-          <input name="email" type="email" placeholder="Email" required />
-          <textarea name="message" rows="5" placeholder="Message" required></textarea>
-          <button class="btn" style="background:#06b6d4;color:#052025">Send message</button>
-        </form>
-        <p id="contactMsg" style="margin-top:0.5rem;font-size:0.95rem"></p>
+  <!-- Viewer overlay -->
+  <div class="overlay" id="viewerOverlay" aria-hidden="true">
+    <div class="viewer" role="dialog" aria-label="Post viewer">
+      <div style="display:flex;align-items:center;justify-content:flex-end;padding:8px;border-bottom:1px solid #eee">
+        <button id="closeViewer" style="background:none;border:0;font-weight:700;cursor:pointer;padding:6px">Close</button>
       </div>
-
-      <aside class="card">
-        <h4 style="margin-top:0">Office</h4>
-        <p style="margin:0.25rem 0">123 Example Street<br>City, Country</p>
-        <p style="margin:0.25rem 0">Email: hello@yoursite.com<br>Phone: +1 (555) 123-4567</p>
-      </aside>
-    </div>
-  </section>
-
-</main>
-
-<footer>
-  <div class="container" style="display:flex;justify-content:space-between;align-items:center">
-    <small>© <span id="year"></span> YourSite — All rights reserved</small>
-    <div>
-      <a href="#" style="color:inherit;text-decoration:none;margin-right:0.75rem">Privacy</a>
-      <a href="#" style="color:inherit;text-decoration:none">Terms</a>
+      <div class="media" id="viewerMedia" style="background:#000;display:flex;align-items:center;justify-content:center">
+        <!-- image inserted -->
+      </div>
+      <div style="padding:10px">
+        <div id="viewerMeta"></div>
+      </div>
     </div>
   </div>
-</footer>
+
+  <!-- Upload modal -->
+  <div class="modal" id="uploadModal" aria-hidden="true">
+    <h3>Create new post</h3>
+    <div class="upload-preview" id="uploadPreview">No image selected</div>
+    <input type="file" id="fileInput" accept="image/*" />
+    <textarea id="postCaption" rows="3" placeholder="Write a caption..." style="width:100%;margin-top:8px;padding:8px;border:1px solid #eee;border-radius:8px"></textarea>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:8px">
+      <button id="cancelUpload" style="background:none;border:0;padding:8px;cursor:pointer">Cancel</button>
+      <button id="publishBtn" style="background:var(--accent);border:0;color:#fff;padding:8px 12px;border-radius:8px;cursor:pointer">Publish</button>
+    </div>
+  </div>
 
 <script>
-  // set year
-  document.getElementById('year').textContent = new Date().getFullYear();
+/* --- Demo data --- */
+const initialStories = [
+  {id:1,name:'you',img:'https://images.unsplash.com/photo-1545996124-6df7d0e1e0b4?q=80&w=400&auto=format&fit=crop&crop=faces'},
+  {id:2,name:'aria',img:'https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=400&auto=format&fit=crop&crop=faces'},
+  {id:3,name:'sam',img:'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?q=80&w=400&auto=format&fit=crop&crop=faces'},
+  {id:4,name:'nina',img:'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=400&auto=format&fit=crop&crop=faces'}
+];
 
-  // mobile menu
-  const toggle = document.querySelector('.menu-toggle');
-  const navlist = document.getElementById('navlist');
-  toggle && toggle.addEventListener('click', () => {
-    const expanded = toggle.getAttribute('aria-expanded') === 'true';
-    toggle.setAttribute('aria-expanded', String(!expanded));
-    if (navlist.style.display === 'block') navlist.style.display = '';
-    else navlist.style.display = 'block';
+let posts = [
+  {id:1, user:'alex_design', place:'Barcelona, Spain', img:'https://images.unsplash.com/photo-1504198453319-5ce911bafcde?q=80&w=1400&auto=format&fit=crop', likes:12, caption:'Sunrise at the beach — perfect start to the day.', comments:[{user:'sam',text:'Wow this is beautiful!'}]},
+  {id:2, user:'nina_travels', place:'Tokyo', img:'https://images.unsplash.com/photo-1491553895911-0055eca6402c?q=80&w=1400&auto=format&fit=crop', likes:89, caption:'Streets of Tokyo at night ✨', comments:[]}
+];
+
+/* --- DOM references --- */
+const storiesEl = document.getElementById('stories');
+const feedEl = document.getElementById('feed');
+const viewerOverlay = document.getElementById('viewerOverlay');
+const viewerMedia = document.getElementById('viewerMedia');
+const viewerMeta = document.getElementById('viewerMeta');
+const uploadModal = document.getElementById('uploadModal');
+const fileInput = document.getElementById('fileInput');
+const uploadPreview = document.getElementById('uploadPreview');
+const postCaption = document.getElementById('postCaption');
+
+/* --- Initialize UI --- */
+function renderStories(){
+  storiesEl.innerHTML = '';
+  initialStories.forEach(s=>{
+    const div = document.createElement('div'); div.className='story';
+    div.innerHTML = `<div class="avatar"><img loading="lazy" src="${s.img}" alt="${s.name}"></div><small>${s.name}</small>`;
+    storiesEl.appendChild(div);
+  });
+}
+
+function createPostElement(p){
+  const el = document.createElement('article'); el.className='post'; el.dataset.id=p.id;
+  el.innerHTML = `
+    <div class="meta">
+      <img src="${p.img}" alt="${p.user}">
+      <div>
+        <div class="who">${p.user}</div>
+        <small>${p.place || ''}</small>
+      </div>
+    </div>
+    <div class="media-wrap"><img loading="lazy" src="${p.img}" alt="post image" /></div>
+    <div class="row">
+      <div class="icons">
+        <button aria-label="Like" class="icon like-btn" data-id="${p.id}"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 6 4 4 6.5 4c1.74 0 3.41.81 4.5 2.08C12.09 4.81 13.76 4 15.5 4 18 4 20 6 20 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>
+        <button aria-label="Comment" class="icon comment-btn" data-id="${p.id}"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M21 6h-2v9H7v2c0 1.1.9 2 2 2h9l4 4V8c0-1.1-.9-2-2-2z"/></svg></button>
+      </div>
+      <div class="icons">
+        <button aria-label="Save" class="icon"><svg viewBox="0 0 24 24"><path fill="currentColor" d="M19 21l-7-3-7 3V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"/></svg></button>
+      </div>
+    </div>
+    <div class="likes" id="likes-${p.id}">${p.likes} likes</div>
+    <div class="caption"><strong>${p.user}</strong> ${escapeHtml(p.caption || '')}</div>
+    <div class="comments" id="comments-${p.id}"></div>
+    <div class="add-comment">
+      <input placeholder="Add a comment..." aria-label="Add comment" data-id="${p.id}">
+      <button data-id="${p.id}">Post</button>
+    </div>
+  `;
+  return el;
+}
+
+function renderFeed(){
+  feedEl.innerHTML = '';
+  posts.forEach(p=>{
+    const el = createPostElement(p);
+    feedEl.appendChild(el);
+    renderComments(p.id);
+  });
+  attachPostEvents();
+}
+
+function renderComments(postId){
+  const commentsEl = document.getElementById('comments-'+postId);
+  commentsEl.innerHTML = '';
+  const p = posts.find(x=>x.id==postId);
+  if(!p) return;
+  p.comments.forEach(c=>{
+    const d = document.createElement('div'); d.className='comment';
+    d.innerHTML = `<strong>${escapeHtml(c.user)}</strong> ${escapeHtml(c.text)}`;
+    commentsEl.appendChild(d);
+  });
+}
+
+/* --- Events and interactions --- */
+function attachPostEvents(){
+  // like
+  document.querySelectorAll('.like-btn').forEach(btn=>{
+    btn.onclick = e=>{
+      const id = parseInt(btn.dataset.id);
+      const p = posts.find(x=>x.id===id);
+      if(!p) return;
+      const likesEl = document.getElementById('likes-'+id);
+      if(btn.classList.contains('liked')){
+        p.likes = Math.max(0, p.likes-1); btn.classList.remove('liked'); btn.style.filter='none';
+      } else {
+        p.likes = p.likes+1; btn.classList.add('liked'); btn.style.filter='invert(30%) sepia(70%) saturate(700%) hue-rotate(200deg)';
+      }
+      likesEl.textContent = p.likes + ' likes';
+    }
   });
 
-  // simple newsletter subscribe (demo only)
-  function subscribe(e){
-    e.preventDefault();
-    const email = document.getElementById('email').value.trim();
-    const msg = document.getElementById('msg');
-    if(!email){ msg.textContent = 'Please enter an email.'; return false }
-    msg.textContent = 'Thanks! You are subscribed (demo).';
-    e.target.reset();
-    return false;
-  }
+  // comment post
+  document.querySelectorAll('.add-comment').forEach(row=>{
+    const input = row.querySelector('input');
+    const btn = row.querySelector('button');
+    btn.onclick = ()=>{
+      const id = parseInt(btn.dataset.id);
+      const text = input.value.trim();
+      if(!text) return;
+      const p = posts.find(x=>x.id===id);
+      p.comments.push({user:'you',text});
+      renderComments(id);
+      input.value='';
+    }
+  });
 
-  // contact form (demo)
-  function sendMessage(e){
-    e.preventDefault();
-    const form = e.target;
-    const name = form.name.value.trim();
-    const email = form.email.value.trim();
-    const message = form.message.value.trim();
-    const out = document.getElementById('contactMsg');
-    if(!name || !email || !message){ out.textContent = 'Please complete all fields.'; out.style.color = 'crimson'; return false }
-    out.style.color = '#065f5b';
-    out.textContent = 'Message sent — thanks! (demo)';
-    form.reset();
-    return false;
-  }
+  // open viewer when click media
+  document.querySelectorAll('.media-wrap img').forEach(img=>{
+    img.onclick = ()=>{
+      openViewer(img.src, img.alt, parseInt(img.closest('.post').dataset.id));
+    }
+  });
 
-  // small accessibility enhancement: trap focus in mobile nav when open (optional)
+  // comment button focus
+  document.querySelectorAll('.comment-btn').forEach(btn=>{
+    btn.onclick = ()=>{
+      const id = btn.dataset.id;
+      const input = document.querySelector(`.add-comment input[data-id="${id}"]`);
+      if(input){ input.focus(); input.scrollIntoView({behavior:'smooth',block:'center'}); }
+    }
+  });
+}
+
+/* Viewer */
+function openViewer(src, alt, id){
+  viewerMedia.innerHTML = `<img src="${src}" alt="${alt}">`;
+  const p = posts.find(x=>x.id==id);
+  viewerMeta.innerHTML = `<div style="font-weight:700">${escapeHtml(p.user)}</div><div style="color:${'var(--muted)'}">${escapeHtml(p.caption || '')}</div>`;
+  viewerOverlay.style.display='flex';
+  viewerOverlay.setAttribute('aria-hidden','false');
+}
+document.getElementById('closeViewer').onclick = ()=>{ viewerOverlay.style.display='none'; viewerOverlay.setAttribute('aria-hidden','true'); };
+
+/* Upload modal */
+document.getElementById('newPostBtn').onclick = ()=>openUpload();
+document.getElementById('uploadNav').onclick = ()=>openUpload();
+function openUpload(){ uploadModal.style.display='block'; uploadModal.setAttribute('aria-hidden','false'); postCaption.value=''; uploadPreview.innerHTML='No image selected'; fileInput.value=''; fileInput.focus(); }
+document.getElementById('cancelUpload').onclick = ()=>{ uploadModal.style.display='none'; uploadModal.setAttribute('aria-hidden','true'); };
+
+fileInput.onchange = (e)=>{
+  const file = e.target.files[0];
+  if(!file) return;
+  const fr = new FileReader();
+  fr.onload = function(){
+    uploadPreview.innerHTML = `<img src="${fr.result}" alt="preview">`;
+    uploadPreview.dataset.preview = fr.result;
+  }
+  fr.readAsDataURL(file);
+}
+
+document.getElementById('publishBtn').onclick = ()=>{
+  const imgData = uploadPreview.dataset.preview;
+  const caption = postCaption.value.trim();
+  if(!imgData){ alert('Pick an image first'); fileInput.focus(); return; }
+  const newPost = {
+    id: Date.now(),
+    user: 'you',
+    place: '',
+    img: imgData,
+    likes: 0,
+    caption,
+    comments: []
+  };
+  posts.unshift(newPost);
+  renderFeed();
+  uploadModal.style.display='none';
+  uploadModal.setAttribute('aria-hidden','true');
+}
+
+/* Bottom nav behavior (simple) */
+document.querySelectorAll('nav.bottom-nav button').forEach(btn=>{
+  btn.onclick = ()=>{
+    document.querySelectorAll('nav.bottom-nav button').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    // quick app-like responses for demo:
+    const id = btn.id;
+    if(id==='homeNav'){ window.scrollTo({top:0,behavior:'smooth'}); }
+    if(id==='searchNav'){ alert('Search — demo only'); }
+    if(id==='activityNav'){ alert('Activity — demo only'); }
+    if(id==='profileNav'){ alert('Profile — demo only'); }
+    if(id==='uploadNav'){ openUpload(); }
+  }
+});
+
+/* Utilities */
+function escapeHtml(s){ return String(s||'').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* Initial render */
+renderStories();
+renderFeed();
+
+/* Accessibility: close viewer on overlay click */
+viewerOverlay.addEventListener('click', (e)=>{
+  if(e.target===viewerOverlay) { viewerOverlay.style.display='none'; viewerOverlay.setAttribute('aria-hidden','true'); }
+});
+
 </script>
-
 </body>
 </html>
 
